@@ -1,15 +1,25 @@
-// can use emitter.on('someevent', function...)
-// binds an event to an object basically
-// emitter ex: server 
-//"Adds a listener to the end of the listeners array for the specified event"
-// what is a listeners array? how do we know what event to put for first param?
-// as in, where do we find a list of all legitimate events
+var q = require('q');
+var http = require('http');
 
-/*
-server.on('connection', function(stream) {
-	console.log('someone connected!');
-})
+var promise = function () {
+	var deferred = q.defer();
+	http.get('http://www.google.com', function (err, resp) {
+		var result = {};
+		result.err = err;
+		result.resp = resp;
+		if (err) {
+			deferred.reject(result.err);
+		}
+		deferred.resolve(result.resp);
+	});
+	return deferred.promise;
+}
 
-
-*/
-
+promise().then(function (resp) {
+	console.log('success');
+	process.exit();
+}, function (reason) {
+	console.log('error reason');
+	console.log(reason);
+	process.exit();
+});
